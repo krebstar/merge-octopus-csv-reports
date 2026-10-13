@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password-Protected ZIP CSV Merger</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Merge Octopus CSV Reports</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Official zip.js CDN with full encryption support (AES / ZipCrypto) -->
     <script src="https://cdn.jsdelivr.net/npm/@zip.js/zip.js/dist/zip.min.js"></script>
-    <!-- PapaParse for robust CSV parsing and generation -->
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script>
         tailwind.config = {
@@ -31,20 +27,10 @@
         }
     </script>
     <style>
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="h-full bg-slate-50 text-slate-800 font-sans antialiased flex flex-col">
@@ -56,13 +42,13 @@
                     <i class="fa-solid fa-file-zipper text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-900 tracking-tight">ZIP CSV Merger Pro</h1>
-                    <p class="text-xs text-slate-500">Secure AES & ZipCrypto Extraction using zip.js</p>
+                    <h1 class="text-lg font-bold text-slate-900 tracking-tight">Merge Octopus CSV Reports</h1>
+                    <p class="text-xs text-slate-500">Folder Drag & Drop + Nested ZIP & AES Decryption</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
-                    <i class="fa-solid fa-lock mr-1.5"></i> Fully Encrypted ZIP Support
+                    <i class="fa-solid fa-shield-halved mr-1.5"></i> Full Recursive Support
                 </span>
             </div>
         </div>
@@ -76,12 +62,12 @@
             <div class="relative z-10 max-w-2xl">
                 <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-3">Extract & Merge <code class="text-indigo-300 bg-black/20 px-2 py-0.5 rounded text-xl">SET051csv.CSV</code></h2>
                 <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-4">
-                    Provide the decryption password for your encrypted archives. Our tool utilizes <strong>zip.js</strong> to decrypt and look inside each ZIP file, extract every <strong>SET051csv.CSV</strong> file, and combine them into a single unified spreadsheet.
+                    Drop folders, subfolders, individual archives, or nested container ZIP files. Provide your password to recursively decrypt and extract every <strong>SET051csv.CSV</strong> file into a unified dataset.
                 </p>
                 <div class="flex flex-wrap gap-4 text-xs sm:text-sm text-indigo-200">
-                    <div class="flex items-center"><i class="fa-solid fa-check text-emerald-400 mr-2"></i> AES-128 / AES-256 / ZipCrypto</div>
-                    <div class="flex items-center"><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Client-Side Security</div>
-                    <div class="flex items-center"><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Automatic Row Harmonization</div>
+                    <div class="flex items-center"><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Folder Drop & Picker</div>
+                    <div class="flex items-center"><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Nested ZIP Recursion</div>
+                    <div class="flex items-center"><i class="fa-solid fa-check text-emerald-400 mr-2"></i> AES & ZipCrypto</div>
                 </div>
             </div>
         </div>
@@ -115,26 +101,35 @@
                     <p class="text-xs text-slate-500">Shared password applied to unlock encrypted entries.</p>
                 </div>
 
-                <!-- File Upload Card -->
+                <!-- File & Folder Upload Card -->
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col gap-4">
                     <div class="flex items-center justify-between">
                         <label class="block text-sm font-semibold text-slate-900 flex items-center">
                             <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold mr-2">2</span>
-                            Upload ZIP Files
+                            Upload Files or Folders
                         </label>
-                        <span id="fileCountBadge" class="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">0 selected</span>
+                        <span id="fileCountBadge" class="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">0 queued</span>
                     </div>
 
                     <!-- Dropzone -->
                     <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-indigo-500 hover:bg-indigo-50/50 transition cursor-pointer flex flex-col items-center justify-center gap-2">
                         <div class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl shadow-inner">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <i class="fa-solid fa-folder-tree"></i>
                         </div>
                         <div class="text-sm font-medium text-slate-700">
-                            Drag & drop encrypted ZIPs here, or <span class="text-indigo-600 underline">browse</span>
+                            Drag & drop folders or ZIPs here
                         </div>
-                        <p class="text-xs text-slate-400">Multiple .zip files supported</p>
-                        <input type="file" id="zipFileInput" multiple accept=".zip" class="hidden">
+                        <p class="text-xs text-slate-400">Supports nested folder trees & container ZIPs</p>
+                        <div class="flex flex-wrap gap-2 justify-center mt-2">
+                            <label class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg cursor-pointer shadow transition">
+                                Select ZIP Files
+                                <input type="file" id="zipFileInput" multiple accept=".zip" class="hidden">
+                            </label>
+                            <label class="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg cursor-pointer shadow transition">
+                                Select Folder
+                                <input type="file" id="folderInput" webkitdirectory directory multiple class="hidden">
+                            </label>
+                        </div>
                     </div>
 
                     <!-- Selected Files List -->
@@ -145,7 +140,7 @@
                     <!-- Process Action Button -->
                     <button id="processBtn" disabled class="w-full mt-2 py-3 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md shadow-indigo-100 transition flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-gears"></i>
-                        <span>Process ZIP Files</span>
+                        <span>Process & Merge Archives</span>
                     </button>
                 </div>
 
@@ -168,7 +163,7 @@
                     </div>
                     <!-- Detailed logs -->
                     <div id="logList" class="bg-slate-900 text-slate-200 font-mono text-xs rounded-xl p-4 max-h-44 overflow-y-auto flex flex-col gap-1.5 shadow-inner">
-                        <div class="text-slate-500">Ready to decrypt and process files...</div>
+                        <div class="text-slate-500">Ready to decrypt and process archives...</div>
                     </div>
                 </div>
 
@@ -196,7 +191,7 @@
                                 <thead id="previewTableHead" class="bg-slate-100 text-slate-700 font-semibold sticky top-0 border-b border-slate-200 shadow-sm">
                                     <tr>
                                         <th class="p-4 text-center text-slate-400">#</th>
-                                        <th class="p-4">Please upload password-protected ZIP files and run processing.</th>
+                                        <th class="p-4">Please upload password-protected ZIP files or folders and run processing.</th>
                                     </tr>
                                 </thead>
                                 <tbody id="previewTableBody" class="divide-y divide-slate-200 bg-white">
@@ -216,7 +211,7 @@
                         <!-- Table footer statistics -->
                         <div id="tableFooter" class="bg-white border-t border-slate-200 px-4 py-3 flex items-center justify-between text-xs text-slate-500">
                             <span id="rowCountInfo">Total Rows: 0</span>
-                            <span id="fileSourceInfo">Successful Files: 0</span>
+                            <span id="fileSourceInfo">Successful Archives: 0</span>
                         </div>
                     </div>
                 </div>
@@ -229,10 +224,10 @@
 
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
-        <p>ZIP CSV Merger Pro &bull; Powered by zip.js &amp; PapaParse</p>
+        <p>Merge Octopus CSV Reports &bull; Powered by zip.js &amp; PapaParse</p>
     </footer>
 
-    <!-- Custom Notification Modal (No alert/confirm) -->
+    <!-- Custom Notification Modal -->
     <div id="customModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transform transition-all flex flex-col gap-4">
             <div class="flex items-center space-x-3">
@@ -254,7 +249,7 @@
     </div>
 
     <script>
-        let selectedFiles = [];
+        let collectedFiles = [];
         let combinedCsvString = '';
         let totalRowsCount = 0;
         let successfulMergesCount = 0;
@@ -264,6 +259,7 @@
         const togglePasswordIcon = document.getElementById('togglePasswordIcon');
         const dropZone = document.getElementById('dropZone');
         const zipFileInput = document.getElementById('zipFileInput');
+        const folderInput = document.getElementById('folderInput');
         const selectedFilesContainer = document.getElementById('selectedFilesContainer');
         const fileCountBadge = document.getElementById('fileCountBadge');
         const processBtn = document.getElementById('processBtn');
@@ -297,9 +293,7 @@
             customModal.classList.remove('hidden');
         }
 
-        modalCloseBtn.addEventListener('click', () => {
-            customModal.classList.add('hidden');
-        });
+        modalCloseBtn.addEventListener('click', () => customModal.classList.add('hidden'));
 
         togglePasswordBtn.addEventListener('click', () => {
             if (zipPasswordInput.type === 'password') {
@@ -311,8 +305,7 @@
             }
         });
 
-        dropZone.addEventListener('click', () => zipFileInput.click());
-
+        // True recursive folder drag-and-drop & traversal via webkitGetAsEntry
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropZone.classList.add('border-indigo-500', 'bg-indigo-50/50');
@@ -322,51 +315,102 @@
             dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50');
         });
 
-        dropZone.addEventListener('drop', (e) => {
+        dropZone.addEventListener('drop', async (e) => {
             e.preventDefault();
             dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50');
-            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                handleFiles(e.dataTransfer.files);
-            }
-        });
-
-        zipFileInput.addEventListener('change', (e) => {
-            if (e.target.files && e.target.files.length > 0) {
-                handleFiles(e.target.files);
-            }
-        });
-
-        function handleFiles(fileList) {
-            for (let i = 0; i < fileList.length; i++) {
-                const file = fileList[i];
-                if (file.name.toLowerCase().endsWith('.zip') || file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
-                    const exists = selectedFiles.some(f => f.name === file.name && f.size === file.size);
-                    if (!exists) {
-                        selectedFiles.push(file);
+            
+            const items = e.dataTransfer.items;
+            if (items && items.length > 0) {
+                for (let i = 0; i < items.length; i++) {
+                    const entry = items[i].webkitGetAsEntry ? items[i].webkitGetAsEntry() : null;
+                    if (entry) {
+                        await traverseFileTree(entry);
+                    } else {
+                        const file = items[i].getAsFile();
+                        if (file) addFileIfValid(file);
                     }
+                }
+            } else if (e.dataTransfer.files) {
+                for (let i = 0; i < e.dataTransfer.files.length; i++) {
+                    addFileIfValid(e.dataTransfer.files[i]);
                 }
             }
             updateFilesUI();
+        });
+
+        async function traverseFileTree(item) {
+            if (item.isFile) {
+                const file = await new Promise(resolve => item.file(resolve));
+                addFileIfValid(file);
+            } else if (item.isDirectory) {
+                const dirReader = item.createReader();
+                const entries = await new Promise(resolve => {
+                    let allEntries = [];
+                    function read() {
+                        dirReader.readEntries(async (results) => {
+                            if (results.length === 0) {
+                                resolve(allEntries);
+                            } else {
+                                allEntries.push(...results);
+                                read();
+                            }
+                        });
+                    }
+                    read();
+                });
+                for (const entry of entries) {
+                    await traverseFileTree(entry);
+                }
+            }
+        }
+
+        zipFileInput.addEventListener('change', (e) => {
+            if (e.target.files) {
+                for (let i = 0; i < e.target.files.length; i++) {
+                    addFileIfValid(e.target.files[i]);
+                }
+                updateFilesUI();
+            }
+        });
+
+        folderInput.addEventListener('change', (e) => {
+            if (e.target.files) {
+                for (let i = 0; i < e.target.files.length; i++) {
+                    addFileIfValid(e.target.files[i]);
+                }
+                updateFilesUI();
+            }
+        });
+
+        function addFileIfValid(file) {
+            const nameLower = file.name.toLowerCase();
+            // Accepts zip files directly, or checks if dragged item has zip extension
+            if (nameLower.endsWith('.zip') || file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
+                const exists = collectedFiles.some(f => f.name === file.name && f.size === file.size);
+                if (!exists) {
+                    collectedFiles.push(file);
+                }
+            }
         }
 
         window.removeFile = function(index) {
-            selectedFiles.splice(index, 1);
+            collectedFiles.splice(index, 1);
             updateFilesUI();
         };
 
         function updateFilesUI() {
-            if (selectedFiles.length > 0) {
+            if (collectedFiles.length > 0) {
                 selectedFilesContainer.classList.remove('hidden');
-                fileCountBadge.textContent = `${selectedFiles.length} selected`;
+                fileCountBadge.textContent = `${collectedFiles.length} queued`;
                 processBtn.removeAttribute('disabled');
             } else {
                 selectedFilesContainer.classList.add('hidden');
-                fileCountBadge.textContent = '0 selected';
+                fileCountBadge.textContent = '0 queued';
                 processBtn.setAttribute('disabled', 'true');
             }
 
             selectedFilesContainer.innerHTML = '';
-            selectedFiles.forEach((file, index) => {
+            collectedFiles.forEach((file, index) => {
                 const item = document.createElement('div');
                 item.className = 'flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs';
                 item.innerHTML = `
@@ -412,6 +456,78 @@
             logList.scrollTop = logList.scrollHeight;
         }
 
+        // Recursive ZIP and Nested ZIP processor
+        async function processZipBlob(blob, password, sourceLabel, allParsedRows, headersRef, processedBlobs) {
+            if (processedBlobs.has(blob)) return;
+            processedBlobs.add(blob);
+
+            let zipReader = null;
+            try {
+                zipReader = new zip.ZipReader(new zip.BlobReader(blob));
+                const entries = await zipReader.getEntries();
+
+                if (!entries || entries.length === 0) return;
+
+                for (const entry of entries) {
+                    if (entry.directory) continue;
+                    const filenameOnly = entry.filename.split('/').pop();
+
+                    // Check for nested ZIP files inside container ZIPs
+                    if (filenameOnly.toLowerCase().endsWith('.zip')) {
+                        addLog(`Nested archive found: ${entry.filename}. Decrypting...`, 'info');
+                        try {
+                            const nestedBlob = await entry.getData(new zip.BlobWriter(), { password: password });
+                            await processZipBlob(nestedBlob, password, `${sourceLabel} -> ${filenameOnly}`, allParsedRows, headersRef, processedBlobs);
+                        } catch (nestedErr) {
+                            addLog(`Failed to decrypt nested ZIP (${entry.filename}): ${nestedErr.message}`, 'error');
+                        }
+                    } 
+                    // Check for target CSV file
+                    else if (filenameOnly.toLowerCase() === 'set051csv.csv') {
+                        addLog(`Target found: ${entry.filename} in ${sourceLabel}`, 'info');
+                        try {
+                            const csvText = await entry.getData(new zip.TextWriter(), { password: password });
+                            if (!csvText || csvText.trim() === '') continue;
+
+                            const parseResult = Papa.parse(csvText, {
+                                header: true,
+                                skipEmptyLines: true,
+                                dynamicTyping: true
+                            });
+
+                            const fileHeaders = parseResult.meta.fields || [];
+                            const fileData = parseResult.data;
+
+                            if (fileData.length > 0) {
+                                if (headersRef.value.length === 0) {
+                                    headersRef.value = [...fileHeaders];
+                                    headersRef.value.unshift('_Source_Archive');
+                                }
+
+                                fileData.forEach(row => {
+                                    const newRow = { _Source_Archive: sourceLabel };
+                                    fileHeaders.forEach(h => {
+                                        newRow[h] = row[h] !== undefined ? row[h] : '';
+                                    });
+                                    allParsedRows.push(newRow);
+                                });
+                                successfulMergesCount++;
+                                addLog(`Successfully parsed ${fileData.length} rows from ${filenameOnly}`, 'success');
+                            }
+                        } catch (csvErr) {
+                            addLog(`Decryption/parsing error on ${entry.filename}: ${csvErr.message}`, 'error');
+                        }
+                    }
+                }
+            } catch (err) {
+                addLog(`Error reading archive ${sourceLabel}: ${err.message}`, 'error');
+            } finally {
+                if (zipReader) {
+                    try { await zipReader.close(); } catch (e) {}
+                }
+            }
+        }
+
         processBtn.addEventListener('click', async () => {
             const password = zipPasswordInput.value;
             if (!password) {
@@ -420,8 +536,8 @@
                 return;
             }
 
-            if (selectedFiles.length === 0) {
-                showCustomModal('No Files', 'Please select at least one ZIP archive to process.', true);
+            if (collectedFiles.length === 0) {
+                showCustomModal('No Files', 'Please select or drop at least one ZIP file or folder.', true);
                 return;
             }
 
@@ -432,115 +548,24 @@
             downloadBtn.setAttribute('disabled', 'true');
             processBtn.setAttribute('disabled', 'true');
 
-            addLog('Initializing zip.js reader engine...', 'info');
+            addLog('Initializing recursive extraction engine...', 'info');
 
             let allParsedRows = [];
-            let headers = null;
+            let headersRef = { value: [] };
             successfulMergesCount = 0;
-            let errorsEncountered = 0;
-            const totalFiles = selectedFiles.length;
+            const processedBlobs = new Set();
+            const totalFiles = collectedFiles.length;
 
             for (let i = 0; i < totalFiles; i++) {
-                const file = selectedFiles[i];
-                const progressPercent = Math.round((i / totalFiles) * 100);
+                const file = collectedFiles[i];
+                const progressPercent = Math.round(((i + 1) / totalFiles) * 100);
                 progressBar.style.width = `${progressPercent}%`;
                 progressText.textContent = `${progressPercent}%`;
 
-                addLog(`Opening archive: ${file.name} (${i + 1}/${totalFiles})`, 'info');
-
-                let zipReader = null;
-                try {
-                    // Instantiate zip.js reader using BlobReader
-                    zipReader = new zip.ZipReader(new zip.BlobReader(file));
-                    const entries = await zipReader.getEntries();
-
-                    if (!entries || entries.length === 0) {
-                        throw new Error(`ZIP archive is empty.`);
-                    }
-
-                    // Find entry matching SET051csv.CSV (case-insensitive or exact match)
-                    let targetEntry = null;
-                    for (const entry of entries) {
-                        const filenameOnly = entry.filename.split('/').pop();
-                        if (filenameOnly.toLowerCase() === 'set051csv.csv') {
-                            targetEntry = entry;
-                            break;
-                        }
-                    }
-
-                    if (!targetEntry || targetEntry.directory) {
-                        throw new Error(`Target file 'SET051csv.CSV' was not found inside the ZIP archive.`);
-                    }
-
-                    addLog(`Found 'SET051csv.CSV' in ${file.name}. Decrypting and extracting...`, 'info');
-
-                    // Extract using TextWriter with password option (supports AES & ZipCrypto)
-                    let csvText = '';
-                    try {
-                        csvText = await targetEntry.getData(new zip.TextWriter(), {
-                            password: password
-                        });
-                    } catch (decErr) {
-                        throw new Error(`Decryption failed. Incorrect password or unsupported encryption format.`);
-                    }
-
-                    if (!csvText || csvText.trim() === '') {
-                        throw new Error(`Extracted file 'SET051csv.CSV' is empty.`);
-                    }
-
-                    // Parse CSV data with PapaParse
-                    const parseResult = Papa.parse(csvText, {
-                        header: true,
-                        skipEmptyLines: true,
-                        dynamicTyping: true
-                    });
-
-                    if (parseResult.errors && parseResult.errors.length > 0) {
-                        const fatalErrors = parseResult.errors.filter(e => e.type === 'Fatal');
-                        if (fatalErrors.length > 0) {
-                            throw new Error(`CSV Parsing error: ${fatalErrors[0].message}`);
-                        }
-                    }
-
-                    const fileHeaders = parseResult.meta.fields || [];
-                    const fileData = parseResult.data;
-
-                    if (fileData.length === 0) {
-                        addLog(`Warning: 'SET051csv.CSV' in ${file.name} contains no rows.`, 'warn');
-                    } else {
-                        if (!headers) {
-                            headers = [...fileHeaders];
-                            // Insert source tracking column
-                            headers.unshift('_Source_ZIP');
-                        }
-
-                        fileData.forEach(row => {
-                            const newRow = { _Source_ZIP: file.name };
-                            fileHeaders.forEach(h => {
-                                newRow[h] = row[h] !== undefined ? row[h] : '';
-                            });
-                            allParsedRows.push(newRow);
-                        });
-
-                        successfulMergesCount++;
-                        addLog(`Successfully extracted and parsed SET051csv.CSV from ${file.name} (${fileData.length} rows).`, 'success');
-                    }
-
-                } catch (err) {
-                    errorsEncountered++;
-                    addLog(`Error processing ${file.name}: ${err.message}`, 'error');
-                } finally {
-                    if (zipReader) {
-                        try {
-                            await zipReader.close();
-                        } catch (closeErr) {
-                            // Ignore close error
-                        }
-                    }
-                }
+                addLog(`Processing file: ${file.name}`, 'info');
+                await processZipBlob(file, password, file.name, allParsedRows, headersRef, processedBlobs);
             }
 
-            // Finalize execution progress
             progressBar.style.width = '100%';
             progressText.textContent = '100%';
             processBtn.removeAttribute('disabled');
@@ -549,19 +574,14 @@
                 totalRowsCount = allParsedRows.length;
                 combinedCsvString = Papa.unparse(allParsedRows);
 
-                renderPreviewTable(headers, allParsedRows);
+                renderPreviewTable(headersRef.value, allParsedRows);
                 downloadBtn.removeAttribute('disabled');
 
-                addLog(`Merge complete! Successfully processed ${successfulMergesCount} archive(s) with ${totalRowsCount} total rows.`, 'success');
-
-                if (errorsEncountered > 0) {
-                    showCustomModal('Completed with Warnings', `Successfully merged ${successfulMergesCount} ZIP file(s), but encountered issues with ${errorsEncountered} file(s). Review logs for details.`);
-                } else {
-                    showCustomModal('Merge Successful!', `All ${successfulMergesCount} ZIP archive(s) were successfully merged into a single dataset containing ${totalRowsCount} rows.`);
-                }
+                addLog(`Merge complete! Successfully gathered ${totalRowsCount} total rows across archives.`, 'success');
+                showCustomModal('Merge Successful!', `Successfully combined datasets from your archives into ${totalRowsCount} total rows.`);
             } else {
-                addLog(`Merge failed: No valid SET051csv.CSV data was successfully extracted.`, 'error');
-                showCustomModal('Merge Failed', 'Could not extract valid SET051csv.CSV files. Please verify your password and that the files contain the correct filename.', true);
+                addLog(`Merge failed: No valid SET051csv.CSV files found or successfully decrypted.`, 'error');
+                showCustomModal('Merge Failed', 'Could not find or decrypt any SET051csv.CSV files with the provided password.', true);
             }
         });
 
@@ -606,7 +626,7 @@
             });
 
             rowCountInfo.textContent = `Total Rows: ${rows.length} ${rows.length > 100 ? '(Showing first 100)' : ''}`;
-            fileSourceInfo.textContent = `Successful Files: ${successfulMergesCount}`;
+            fileSourceInfo.textContent = `Successful Extractions: ${successfulMergesCount}`;
         }
 
         downloadBtn.addEventListener('click', () => {
