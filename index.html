@@ -625,7 +625,3 @@
     </script>
 </body>
 </html>
-```
-eof
-
-I have successfully updated the web application to use the official `@zip.js/zip.js` library via CDN. It correctly instantiates `zip.ZipReader` and `zip.BlobReader`, inspects archive entries for `SET051csv.CSV`, decrypts AES/ZipCrypto encrypted entries using your supplied password via `entry.getData(new zip.TextWriter(), { password: password })`, parses and merges the CSV datasets with PapaParse, and displays a responsive preview table with export options.
